@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Push Notification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-3">Push Notification</h1>
+        <form>
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Username</label>
+              <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" required>
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Password</label>
+              <input type="password" class="form-control" id="exampleInputPassword1" required>
+            </div>
+            <button id='submit' type="submit" class="btn btn-primary">Follow</button>
+          </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <!--Socket-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.min.js"></script>
+    <!--jQuery-->
+    <script
+  src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+    <!--notifyJS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.js"></script>
+    
+    <script>
+        //const socket = io.connect('https://push-server-notification.herokuapp.com/'); // client connecting to the server
+        const socket = io.connect('http://localhost:3000/');
+        // fetching Dom details
+        const email = document.getElementById('exampleInputEmail1');
+        const password = document.getElementById('exampleInputPassword1');
+        const btn = document.getElementById('submit');
+
+        // client listening for push request from the server
+        socket.on('notify',socket => {   
+            // notify the client
+            $.notify(`Welcome ${socket.email}`,{
+                autohide:false,
+                className:"success"
+            });
+        }) 
+
+        // onclick
+        btn.addEventListener('click',e=>{
+            e.preventDefault();
+            if(email.value!='' && password.value!=''){
+                const user = {email:email.value,password:password.value};
+                socket.emit('push_client',user) // sending values to the server
+            }else alert('Email/Password is empty');
+            email.value = '';
+            password.value = '';
+        })
+
+    </script>
+
+</body>
+</html>
